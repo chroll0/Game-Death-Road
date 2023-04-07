@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Moving Barriers Program</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <header>
+      <div class="headerContainer">
+        <h3 class="collectedStars"></h3>
+        <h3 class="timer"></h3>
+        <h3 class="gameLives"></h3>
+      </div>
+    </header>
+    <div class="overlay"></div>
+    <div class="modal">
+      <h1>Death <span>road</span></h1>
+      <div class="carPark">
+        <img class="carBtn" src="Images/blueCar.png" alt="blueCar" />
+        <img class="carBtn" src="Images/redCar.png" alt="redCar" />
+        <img class="carBtn" src="Images/orangeCar.png" alt="orangeCar" />
+      </div>
+      <p class="requiredMessage">choose your car</p>
+      <button class="startBtn">start</button>
+    </div>
+    <div class="gameEnd hidden">
+      <h1>Death <span>road</span></h1>
+      <div class=""></div>
+      <p class="gameMessage">game over</p>
+      <p class="playTime"></p>
+      <p class="playerStars"></p>
+      <button class="restartBtn">menu</button>
+    </div>
+    <canvas id="canvas" width="500" height="500"></canvas>
+    <script src="script.js"></script>
+  </body>
+</html>
