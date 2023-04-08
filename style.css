@@ -30,7 +30,7 @@ body {
 }
 canvas {
   background: transparent;
-  backdrop-filter: blur(20px);
+  backdrop-filter: blur(50px);
   box-shadow: 0 0 5px 1px white;
 }
 header {
@@ -133,7 +133,7 @@ header {
   rotate: 0deg;
 }
 .headerContainer {
-  width: 70%;
+  width: 500px;
   height: 50px;
   display: flex;
   box-shadow: 0 0 5px 1px white;

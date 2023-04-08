@@ -16,11 +16,23 @@ const playTime = document.querySelector(".playTime");
 // Set up the canvas
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
-canvas.width = window.innerWidth * 0.7;
-canvas.height = window.innerHeight * 0.7;
+canvas.width = 500;
+// window.innerWidth * 0.7;
+canvas.height = 500;
+// window.innerHeight * 0.7;
 const carImage = new Image();
-const barrierImage = new Image();
-barrierImage.src = "Images/barrier.png";
+const yellowCarImage = new Image();
+yellowCarImage.src = "Images/yellowCar.png";
+const policeCarImage = new Image();
+policeCarImage.src = "Images/policeCar.png";
+const blackCarImage = new Image();
+blackCarImage.src = "Images/blackCar.png";
+const whiteCarImage = new Image();
+whiteCarImage.src = "Images/whiteCar.png";
+const purpleCarImage = new Image();
+purpleCarImage.src = "Images/purpleCar.png";
+const orangeCarImage = new Image();
+orangeCarImage.src = "Images/orangeCar.png";
 const starImage = new Image();
 starImage.src = "Images/star.png";
 
@@ -41,6 +53,7 @@ playButton();
 function startGame() {
   if (playing) {
     ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear the canvas and redraw the rectangle in its new position
+    drawRoadLines();
     drawCar();
     document.addEventListener("keydown", moveCar);
     drawBarriers();
@@ -111,44 +124,85 @@ function moveCar(e) {
 // Draw the barriers on the canvas
 function drawBarriers() {
   // Draw the barriers
-  for (var i = 0; i < barriers.length; i++) {
+  for (let i = 0; i < barriers.length; i++) {
     ctx.drawImage(
-      barrierImage,
+      barriers[i].barrierImage,
       barriers[i].x,
       barriers[i].y,
       barriers[i].width,
       barriers[i].height
     );
-  }
-  for (var i = 0; i < barriers.length; i++) {
     barriers[i].y += barriers[i].speed;
-  } // Check if the first barrier has reached the canvas height
-  if (barriers[0].y >= canvas.height) {
-    numBarriers++;
-    console.log(numBarriers);
-    barriers.shift(); // remove the first barrier
-    barriers.push({
-      x: Math.random() * (canvas.width - 30),
-      y: -30,
-      width: 30,
-      height: 30,
-      speed: Math.floor(Math.random() * 3) + 1,
-    });
-    if (numBarriers % 10 == 0) {
-      // Add a new barrier to the array
-      barriers.push({
-        x: Math.random() * (canvas.width - 30),
-        y: -30,
-        width: 30,
-        height: 30,
-        speed: Math.floor(Math.random() * 3) + 1,
-      });
+    // Check if the barrier has reached the canvas height
+    if (barriers[i].y >= canvas.height) {
+      barriers[i].x = Math.random() * (canvas.width - 30);
+      barriers[i].y = -30;
+      barriers[i].speed = Math.floor(Math.random() * 3) + 1;
+      numBarriers++;
+      console.log(numBarriers);
+      if (numBarriers % 5 == 0) {
+        // Add a new barrier to the array
+        if (numBarriers == 5) {
+          barriers.push({
+            x: Math.random() * (canvas.width - 30),
+            y: -30,
+            width: 30,
+            height: 60,
+            speed: Math.random() * 3 + 1,
+            barrierImage: purpleCarImage,
+          });
+        }
+        if (numBarriers >= 10 && numBarriers < 20) {
+          // Add a new barrier to the array
+          barriers.push({
+            x: Math.random() * (canvas.width - 30),
+            y: -30,
+            width: 30,
+            height: 60,
+            speed: Math.random() * 3.5 + 1,
+            barrierImage: yellowCarImage,
+          });
+        }
+        if (numBarriers >= 20 && numBarriers < 30) {
+          // Add a new barrier to the array
+          barriers.push({
+            x: Math.random() * (canvas.width - 30),
+            y: -30,
+            width: 30,
+            height: 60,
+            speed: Math.random() * 3.5 + 1.5,
+            barrierImage: blackCarImage,
+          });
+        }
+        if (numBarriers >= 30 && numBarriers < 40) {
+          // Add a new barrier to the array
+          barriers.push({
+            x: Math.random() * (canvas.width - 30),
+            y: -30,
+            width: 30,
+            height: 60,
+            speed: Math.random() * 3.5 + 2,
+            barrierImage: whiteCarImage,
+          });
+        }
+        if (numBarriers == 40) {
+          // Add a new barrier to the array
+          barriers.push({
+            x: Math.random() * (canvas.width - 30),
+            y: -30,
+            width: 30,
+            height: 60,
+            speed: Math.random() * 4 + 2,
+            barrierImage: policeCarImage,
+          });
+        }
+      }
     }
   }
 }
-// Draw the barriers on the canvas
+// Draw the stars on the canvas
 function drawStars() {
-  // Draw the barriers
+  // Draw the stars
   for (var i = 0; i < stars.length; i++) {
     ctx.drawImage(
       starImage,
@@ -161,8 +215,8 @@ function drawStars() {
 }
 // Check for collisions between the object and barriers
 function checkCollisions() {
-  for (var i = 0; i < barriers.length; i++) {
-    var barrier = barriers[i];
+  for (let i = 0; i < barriers.length; i++) {
+    let barrier = barriers[i];
     if (
       car.x <= barrier.x + barrier.width &&
       car.x + car.width >= barrier.x &&
@@ -170,29 +224,44 @@ function checkCollisions() {
       car.y + car.height >= barrier.y
     ) {
       playerLives--;
+      barriers.splice(i, 1);
+      barriers.push({
+        x: Math.random() * (canvas.width - 30),
+        y: -30,
+        width: 30,
+        height: 60,
+        speed: Math.random() * 4 + 2.5,
+        barrierImage: orangeCarImage,
+      });
       if (playerLives == 2) {
         gameLives.textContent = "🤍❤️❤️";
-        barriers = [
-          {
-            x: Math.random() * (canvas.width - 30),
-            y: -30,
-            width: 30,
-            height: 30,
-            speed: 2,
-          },
-        ];
+        if (barriers.length < 1) {
+          barriers = [
+            {
+              x: Math.random() * (canvas.width - 30),
+              y: -30,
+              width: 30,
+              height: 60,
+              speed: Math.random() * 2 + 1,
+              barrierImage: purpleCarImage,
+            },
+          ];
+        }
       }
       if (playerLives == 1) {
         gameLives.textContent = "🤍🤍❤️";
-        barriers = [
-          {
-            x: Math.random() * (canvas.width - 30),
-            y: -30,
-            width: 30,
-            height: 30,
-            speed: 2,
-          },
-        ];
+        if (barriers.length < 1) {
+          barriers = [
+            {
+              x: Math.random() * (canvas.width - 30),
+              y: -30,
+              width: 30,
+              height: 60,
+              speed: Math.random() * 2 + 1,
+              barrierImage: purpleCarImage,
+            },
+          ];
+        }
       }
       if (playerLives == 0) {
         gameLives.textContent = "🤍🤍🤍";
@@ -221,7 +290,7 @@ function initialization() {
     y: canvas.height / 2,
     width: 30,
     height: 60,
-    speed: 15,
+    speed: 10,
   };
   // Define the barriers
   barriers = [
@@ -229,8 +298,9 @@ function initialization() {
       x: Math.random() * (canvas.width - 30),
       y: -30,
       width: 30,
-      height: 30,
-      speed: 2,
+      height: 60,
+      speed: Math.random() * 2 + 1,
+      barrierImage: purpleCarImage,
     },
   ];
   stars = [
@@ -267,4 +337,80 @@ function gameOver() {
     gameEnd.classList.add("hidden");
     modal.classList.remove("hidden");
   });
+}
+let roadLines = [
+  {
+    x: 0,
+    y: 0,
+    width: 15,
+    height: 90,
+    speed: 0.5,
+  },
+  {
+    x: 0,
+    y: 120,
+    width: 15,
+    height: 90,
+    speed: 0.5,
+  },
+  {
+    x: 0,
+    y: 240,
+    width: 15,
+    height: 90,
+    speed: 0.5,
+  },
+  {
+    x: 0,
+    y: 360,
+    width: 15,
+    height: 90,
+    speed: 0.5,
+  },
+  {
+    x: 0,
+    y: 480,
+    width: 15,
+    height: 90,
+    speed: 0.5,
+  },
+];
+function drawRoadLines() {
+  // Draw the road lines
+  ctx.fillStyle = "#ffffff7b";
+  for (let i = 0; i < roadLines.length; i++) {
+    ctx.fillRect(
+      roadLines[i].x,
+      roadLines[i].y,
+      roadLines[i].width,
+      roadLines[i].height
+    );
+  }
+  for (let i = 0; i < roadLines.length; i++) {
+    // Add an offset to every other line's x value
+    let x = roadLines[i].x + 125;
+    ctx.fillRect(x, roadLines[i].y, roadLines[i].width, roadLines[i].height);
+  }
+  for (let i = 0; i < roadLines.length; i++) {
+    // Add an offset to every other line's x value
+    let x = roadLines[i].x + 250;
+    ctx.fillRect(x, roadLines[i].y, roadLines[i].width, roadLines[i].height);
+  }
+  for (let i = 0; i < roadLines.length; i++) {
+    // Add an offset to every other line's x value
+    let x = roadLines[i].x + 375;
+    ctx.fillRect(x, roadLines[i].y, roadLines[i].width, roadLines[i].height);
+  }
+  for (let i = 0; i < roadLines.length; i++) {
+    // Add an offset to every other line's x value
+    let x = roadLines[i].x + 485;
+    ctx.fillRect(x, roadLines[i].y, roadLines[i].width, roadLines[i].height);
+  }
+  for (let i = 0; i < roadLines.length; i++) {
+    roadLines[i].y += roadLines[i].speed;
+    if (roadLines[i].y >= canvas.height) {
+      // Set the y value of the road line to -100
+      roadLines[i].y = -100;
+    }
+  } // Check if the first barrier has reached the canvas height
 }
