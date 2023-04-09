@@ -104,13 +104,15 @@ header {
   letter-spacing: 5px;
   color: #1c1c4f;
 }
-.modal p {
-  font-size: 16px;
-  letter-spacing: 4px;
+.requiredMessage {
+  color: #ffffff;
+  height: 30px;
+  font-size: 18px;
+  letter-spacing: 2px;
 }
 .gameMessage {
   font-size: 21px;
-  letter-spacing: 4px;
+  letter-spacing: 5px;
   color: #bd2c4c;
 }
 .hidden {

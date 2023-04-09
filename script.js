@@ -12,13 +12,12 @@ const gameEnd = document.querySelector(".gameEnd");
 const restartBtn = document.querySelector(".restartBtn");
 const playerStars = document.querySelector(".playerStars");
 const playTime = document.querySelector(".playTime");
-
 // Set up the canvas
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
 canvas.width = 500;
 // window.innerWidth * 0.7;
-canvas.height = 500;
+canvas.height = 600;
 // window.innerHeight * 0.7;
 const carImage = new Image();
 const yellowCarImage = new Image();
@@ -35,7 +34,8 @@ const orangeCarImage = new Image();
 orangeCarImage.src = "Images/orangeCar.png";
 const starImage = new Image();
 starImage.src = "Images/star.png";
-
+const heartImage = new Image();
+heartImage.src = "Images/heartImage.png";
 // Define the object
 let car,
   barriers,
@@ -45,7 +45,9 @@ let car,
   gameTime,
   playerLives,
   playing,
-  timerFunction;
+  timerFunction,
+  extraLives,
+  carChosen;
 // Start the game
 initialization();
 playButton();
@@ -58,6 +60,7 @@ function startGame() {
     document.addEventListener("keydown", moveCar);
     drawBarriers();
     drawStars();
+    drawLives();
     checkCollisions(); // Check for collisions on every animation frame
     requestAnimationFrame(startGame);
   }
@@ -68,10 +71,15 @@ function playButton() {
       carBtn.forEach((btn) => btn.classList.remove("activeCarBtn"));
       this.classList.add("activeCarBtn");
       carImage.src = this.src;
+      requiredMessage.textContent = "PRESS START";
+      requiredMessage.style.transition = "0.8s";
+      requiredMessage.style.color = "#e32bce";
+      requiredMessage.style.letterSpacing = "4px";
+      carChosen = true;
     });
   });
   startBtn.addEventListener("click", function () {
-    if (carImage.src != "") {
+    if (carChosen) {
       overlay.classList.add("hidden");
       modal.classList.add("hidden");
       playing = true;
@@ -85,7 +93,9 @@ function playButton() {
         gameTime++;
       }, 1000);
     } else {
+      requiredMessage.style.transition = "0.8s";
       requiredMessage.style.color = "#e32bce";
+      requiredMessage.style.letterSpacing = "4px";
     }
   });
 }
@@ -136,19 +146,18 @@ function drawBarriers() {
     // Check if the barrier has reached the canvas height
     if (barriers[i].y >= canvas.height) {
       barriers[i].x = Math.random() * (canvas.width - 30);
-      barriers[i].y = -30;
-      barriers[i].speed = Math.floor(Math.random() * 3) + 1;
+      barriers[i].y = Math.random() * 120 - 200;
       numBarriers++;
-      console.log(numBarriers);
+      // console.log(numBarriers);
       if (numBarriers % 5 == 0) {
         // Add a new barrier to the array
         if (numBarriers == 5) {
           barriers.push({
             x: Math.random() * (canvas.width - 30),
-            y: -30,
+            y: Math.random() * 120 - 180,
             width: 30,
             height: 60,
-            speed: Math.random() * 3 + 1,
+            speed: Math.random() * 1 + 1.5,
             barrierImage: purpleCarImage,
           });
         }
@@ -156,10 +165,10 @@ function drawBarriers() {
           // Add a new barrier to the array
           barriers.push({
             x: Math.random() * (canvas.width - 30),
-            y: -30,
+            y: Math.random() * 120 - 180,
             width: 30,
             height: 60,
-            speed: Math.random() * 3.5 + 1,
+            speed: Math.random() * 1 + 2,
             barrierImage: yellowCarImage,
           });
         }
@@ -167,10 +176,10 @@ function drawBarriers() {
           // Add a new barrier to the array
           barriers.push({
             x: Math.random() * (canvas.width - 30),
-            y: -30,
+            y: Math.random() * 120 - 180,
             width: 30,
             height: 60,
-            speed: Math.random() * 3.5 + 1.5,
+            speed: Math.random() * 1 + 2.5,
             barrierImage: blackCarImage,
           });
         }
@@ -178,23 +187,65 @@ function drawBarriers() {
           // Add a new barrier to the array
           barriers.push({
             x: Math.random() * (canvas.width - 30),
-            y: -30,
+            y: Math.random() * 120 - 180,
             width: 30,
             height: 60,
-            speed: Math.random() * 3.5 + 2,
+            speed: Math.random() * 1 + 3,
             barrierImage: whiteCarImage,
           });
         }
-        if (numBarriers == 40) {
+        if (numBarriers >= 40 && numBarriers < 50) {
           // Add a new barrier to the array
           barriers.push({
             x: Math.random() * (canvas.width - 30),
-            y: -30,
+            y: Math.random() * 120 - 180,
             width: 30,
             height: 60,
-            speed: Math.random() * 4 + 2,
+            speed: Math.random() * 1 + 3.5,
+            barrierImage: orangeCarImage,
+          });
+        }
+        if (numBarriers == 100) {
+          // Add a new barrier to the array
+          barriers.push({
+            x: Math.random() * (canvas.width - 30),
+            y: Math.random() * 120 - 180,
+            width: 30,
+            height: 60,
+            speed: 4,
             barrierImage: policeCarImage,
           });
+        }
+        if (numBarriers == 250) {
+          // Add a new barrier to the array
+          barriers.push({
+            x: Math.random() * (canvas.width - 30),
+            y: Math.random() * 120 - 180,
+            width: 30,
+            height: 60,
+            speed: 4.3,
+            barrierImage: policeCarImage,
+          });
+        }
+        if (numBarriers == 350) {
+          // Add a new barrier to the array
+          barriers.push({
+            x: Math.random() * (canvas.width - 30),
+            y: Math.random() * 120 - 180,
+            width: 30,
+            height: 60,
+            speed: 5,
+            barrierImage: policeCarImage,
+          });
+        }
+      }
+      if (numBarriers % 20 == 0 && numBarriers <= 200) {
+        if (playerLives == 1 || playerLives == 2) {
+          extraLives[0].x = Math.random() * (canvas.width - 20);
+          extraLives[0].y = Math.random() * (canvas.height - 20);
+        } else if (playerLives == 3) {
+          extraLives[0].x = canvas.width;
+          extraLives[0].y = canvas.height;
         }
       }
     }
@@ -213,6 +264,18 @@ function drawStars() {
     );
   }
 }
+function drawLives() {
+  // Draw the extraLives
+  for (var i = 0; i < extraLives.length; i++) {
+    ctx.drawImage(
+      heartImage,
+      extraLives[i].x,
+      extraLives[i].y,
+      extraLives[i].width,
+      extraLives[i].height
+    );
+  }
+}
 // Check for collisions between the object and barriers
 function checkCollisions() {
   for (let i = 0; i < barriers.length; i++) {
@@ -224,25 +287,18 @@ function checkCollisions() {
       car.y + car.height >= barrier.y
     ) {
       playerLives--;
-      barriers.splice(i, 1);
-      barriers.push({
-        x: Math.random() * (canvas.width - 30),
-        y: -30,
-        width: 30,
-        height: 60,
-        speed: Math.random() * 4 + 2.5,
-        barrierImage: orangeCarImage,
-      });
+      barriers[i].x = Math.random() * (canvas.width - 30);
+      barriers[i].y = Math.random() * 120 - 180;
       if (playerLives == 2) {
         gameLives.textContent = "🤍❤️❤️";
         if (barriers.length < 1) {
           barriers = [
             {
               x: Math.random() * (canvas.width - 30),
-              y: -30,
+              y: Math.random() * 120 - 180,
               width: 30,
               height: 60,
-              speed: Math.random() * 2 + 1,
+              speed: Math.random() * 1 + 1.5,
               barrierImage: purpleCarImage,
             },
           ];
@@ -254,10 +310,10 @@ function checkCollisions() {
           barriers = [
             {
               x: Math.random() * (canvas.width - 30),
-              y: -30,
+              y: Math.random() * 120 - 180,
               width: 30,
               height: 60,
-              speed: Math.random() * 2 + 1,
+              speed: Math.random() * 1 + 1.5,
               barrierImage: purpleCarImage,
             },
           ];
@@ -270,17 +326,48 @@ function checkCollisions() {
       }
     }
   }
-  let star = stars[0];
+  for (let i = 0; i < stars.length; i++) {
+    let star = stars[i];
+    if (
+      car.x <= star.x + star.width &&
+      car.x + car.width >= star.x &&
+      car.y <= star.y + star.height &&
+      car.y + car.height >= star.y
+    ) {
+      numStars++;
+      collectedStars.textContent = "⭐: " + numStars;
+      stars[i].x = Math.random() * (canvas.width - 20);
+      stars[i].y = Math.random() * (canvas.height - 20);
+      if (numStars % 15 == 0) {
+        stars.push({
+          x: Math.random() * (canvas.width - 20),
+          y: Math.random() * (canvas.height - 20),
+          width: 20,
+          height: 20,
+        });
+      }
+    }
+  }
+  // get extraLives
+  let extraLive = extraLives[0];
   if (
-    car.x <= star.x + star.width &&
-    car.x + car.width >= star.x &&
-    car.y <= star.y + star.height &&
-    car.y + car.height >= star.y
+    car.x <= extraLive.x + extraLive.width &&
+    car.x + car.width >= extraLive.x &&
+    car.y <= extraLive.y + extraLive.height &&
+    car.y + car.height >= extraLive.y
   ) {
-    numStars++;
-    collectedStars.textContent = "⭐: " + numStars;
-    stars[0].x = Math.random() * (canvas.width - 20);
-    stars[0].y = Math.random() * (canvas.height - 20);
+    if (playerLives == 2) {
+      playerLives++;
+      gameLives.textContent = "❤️❤️❤️";
+      extraLive.x = -100;
+      extraLive.y = -100;
+    }
+    if (playerLives == 1) {
+      playerLives++;
+      gameLives.textContent = "🤍❤️❤️";
+      extraLive.x = -100;
+      extraLive.y = -100;
+    }
   }
 }
 function initialization() {
@@ -296,13 +383,14 @@ function initialization() {
   barriers = [
     {
       x: Math.random() * (canvas.width - 30),
-      y: -30,
+      y: Math.random() * 120 - 180,
       width: 30,
       height: 60,
-      speed: Math.random() * 2 + 1,
+      speed: Math.random() * 1 + 1,
       barrierImage: purpleCarImage,
     },
   ];
+  // Define the stars
   stars = [
     {
       x: Math.random() * (canvas.width - 20),
@@ -311,17 +399,27 @@ function initialization() {
       height: 20,
     },
   ];
+  // Define the extra lives
+  extraLives = [
+    {
+      x: canvas.width,
+      y: canvas.height,
+      width: 20,
+      height: 20,
+    },
+  ];
+  // Reset car position
+  car.x = canvas.width / 2;
+  car.y = canvas.height / 2;
+  //initialization - Reset game
   numBarriers = 0;
   numStars = 0;
   playerLives = 3;
   gameTime = 0;
   playing = false;
-  // Reset car position
-  car.x = canvas.width / 2;
-  car.y = canvas.height / 2;
-  // Reset game
   numBarriers = 0;
   playing = false;
+  carChosen = false;
   // Start the game again
   collectedStars.textContent = "⭐: " + numStars;
   gameLives.textContent = "❤️❤️❤️";
@@ -336,6 +434,13 @@ function gameOver() {
   restartBtn.addEventListener("click", function () {
     gameEnd.classList.add("hidden");
     modal.classList.remove("hidden");
+    carBtn.forEach((carIndex) => {
+      carIndex.classList.remove("activeCarBtn");
+    });
+    requiredMessage.textContent = "CHOOSE YOUR CAR";
+    requiredMessage.style.transition = "0.8s";
+    requiredMessage.style.color = "#ffffff";
+    requiredMessage.style.letterSpacing = "2px";
   });
 }
 let roadLines = [
@@ -370,6 +475,13 @@ let roadLines = [
   {
     x: 0,
     y: 480,
+    width: 15,
+    height: 90,
+    speed: 0.5,
+  },
+  {
+    x: 0,
+    y: 600,
     width: 15,
     height: 90,
     speed: 0.5,
@@ -410,7 +522,7 @@ function drawRoadLines() {
     roadLines[i].y += roadLines[i].speed;
     if (roadLines[i].y >= canvas.height) {
       // Set the y value of the road line to -100
-      roadLines[i].y = -100;
+      roadLines[i].y = -120;
     }
   } // Check if the first barrier has reached the canvas height
 }
