@@ -36,6 +36,10 @@ const starImage = new Image();
 starImage.src = "Images/star.png";
 const heartImage = new Image();
 heartImage.src = "Images/heartImage.png";
+//TimeLineSound
+const timeLineSound = new Audio();
+timeLineSound.volume = 0.04;
+timeLineSound.src = "TimeLineSound.wav";
 // Define the object
 let car,
   barriers,
@@ -55,6 +59,7 @@ playButton();
 function startGame() {
   if (playing) {
     ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear the canvas and redraw the rectangle in its new position
+    timeLineSound.play();
     drawRoadLines();
     drawCar();
     document.addEventListener("keydown", moveCar);
@@ -125,6 +130,28 @@ function moveCar(e) {
       }
       break;
     case 40: // Down arrow
+      if (car.y + car.height < canvas.height) {
+        car.y += car.speed;
+      }
+      break;
+  }
+  switch (e.key) {
+    case "a": // Left arrow
+      if (car.x > 0) {
+        car.x -= car.speed;
+      }
+      break;
+    case "w": // Up arrow
+      if (car.y > 0) {
+        car.y -= car.speed;
+      }
+      break;
+    case "d": // Right arrow
+      if (car.x + car.width < canvas.width) {
+        car.x += car.speed;
+      }
+      break;
+    case "s": // Down arrow
       if (car.y + car.height < canvas.height) {
         car.y += car.speed;
       }
@@ -286,6 +313,7 @@ function checkCollisions() {
       car.y <= barrier.y + barrier.height &&
       car.y + car.height >= barrier.y
     ) {
+      damageAnimation();
       playerLives--;
       barriers[i].x = Math.random() * (canvas.width - 30);
       barriers[i].y = Math.random() * 120 - 180;
@@ -416,7 +444,6 @@ function initialization() {
   numStars = 0;
   playerLives = 3;
   gameTime = 0;
-  playing = false;
   numBarriers = 0;
   playing = false;
   carChosen = false;
@@ -525,4 +552,17 @@ function drawRoadLines() {
       roadLines[i].y = -120;
     }
   } // Check if the first barrier has reached the canvas height
+}
+function damageAnimation() {
+  let activeCarImage = carImage.src;
+  carImage.src = "";
+  setTimeout(() => {
+    carImage.src = activeCarImage;
+  }, 50);
+  setTimeout(() => {
+    carImage.src = "";
+  }, 100);
+  setTimeout(() => {
+    carImage.src = activeCarImage;
+  }, 150);
 }
